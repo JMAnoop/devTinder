@@ -2,18 +2,24 @@ const express = require('express')
 
 const app = express();
 
-app.use('/helo', (req, res) => {
-    res.send('Hello World')
+
+app.get('/user', (req, res) => {
+    res.send({firsrName: 'Anoop',
+        lastName: 'JM'
+    })
+})
+
+app.post('/user', (req, res) => {
+    res.send('Successful saved the data')
+})
+
+app.delete('/user', (req, res) => {
+    res.send('Data Deleted successfully')
 })
 
 app.use('/test', (req, res) => {
-    res.send('Hello from Anoop')
+    res.send('Hello world')
 })
-
-app.use('/qa', (req, res) => {
-    res.send('Learn Test Automation')
-})
-
 
 app.listen(3000, () => {
     console.log('Server is successfully running ...')
