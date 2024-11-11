@@ -3,6 +3,22 @@ const express = require('express')
 const app = express();
 //multiple handlers
 
+// app.use('/user', (req, res) => {
+//     console.log(req.query)
+//     res.send({
+//         firstName: 'Anoop',
+//         lastName: 'JM'
+//     })
+// })
+
+app.use('/user/:userId/:name/:age', (req, res) => {
+    console.log(req.params)
+    res.send({
+        firstName: 'Anoop',
+        lastName: 'JM'
+    })
+})
+
 app.get('/user',
 
 [(req, res, next) => 
