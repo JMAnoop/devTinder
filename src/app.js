@@ -1,68 +1,20 @@
 const express = require('express')
-
+const {adminAuth, userAuth} = require('./middlewares/auth')
 const app = express();
-//multiple handlers
 
-// app.use('/user', (req, res) => {
-//     console.log(req.query)
-//     res.send({
-//         firstName: 'Anoop',
-//         lastName: 'JM'
-//     })
-// })
+app.use('/admin',adminAuth)
 
-app.use('/user/:userId/:name/:age', (req, res) => {
-    console.log(req.params)
-    res.send({
-        firstName: 'Anoop',
-        lastName: 'JM'
-    })
+app.get('/admin/getAllUsers', (req, res) => {
+    res.send('User is authorized and data is been sent')
 })
 
-app.get('/user1', (req, res, next) => {
-    console.log('Handling user1')
-    //res.send('User1 is successful')
-    next()
+app.get('/admin/deleteUser', (req, res) => {
+    res.send('Deleted a user')
 })
 
-app.use('/user1', (req,res,next) => {
-    res.send('User1 added to db')
+app.get('/user', userAuth, (req, res) => {
+    res.send('User is added successfully')
 })
-
-app.get('/user',
-
-[(req, res, next) => 
-{
-    next()
-   // res.send('Handling route user 1')
-},
-
-(req, res, next) => {
-    next();
-   // res.send('Handlig route user 2')
-}],
-
-(req, res) => {
-    res.send('Handling route user 3')
-})
-
-// app.get('/user', (req, res) => {
-//     res.send({firsrName: 'Anoop',
-//         lastName: 'JM'
-//     })
-// })
-
-// app.post('/user', (req, res) => {
-//     res.send('Successful saved the data')
-// })
-
-// app.delete('/user', (req, res) => {
-//     res.send('Data Deleted successfully')
-// })
-
-// app.use('/test', (req, res) => {
-//     res.send('Hello world')
-// })
 
 app.listen(3000, () => {
     console.log('Server is successfully running ...')
