@@ -19,6 +19,16 @@ app.use('/user/:userId/:name/:age', (req, res) => {
     })
 })
 
+app.get('/user1', (req, res, next) => {
+    console.log('Handling user1')
+    //res.send('User1 is successful')
+    next()
+})
+
+app.use('/user1', (req,res,next) => {
+    res.send('User1 added to db')
+})
+
 app.get('/user',
 
 [(req, res, next) => 
