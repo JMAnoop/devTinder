@@ -1,12 +1,14 @@
 const express = require('express')
-const {adminAuth, userAuth} = require('./middlewares/auth')
 const app = express();
 const {databaseConnect} = require('./config/dababase')
 const {User} = require('./models/user')
 const validator = require('validator')
 const {validateSignupData} = require('./utils/validations')
 const {valaidateSingninData} = require('./utils/validations')
+const {userAuth, adminAuth} = require('./middlewares/auth')
 
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt')
 
 databaseConnect()
@@ -22,6 +24,7 @@ databaseConnect()
 })
 
 app.use(express.json())
+app.use(cookieParser())
 
 app.post('/signup', async (req, res) => {
 
@@ -59,12 +62,38 @@ app.post('/login', async (req, res) => {
             throw new Error('Invalid credentials')
         }
         else {
-            res.status(404).send('Login successfull !!!!')
+            //Create a jwt token
+            const token = jwt.sign({_id: user._id}, 'Devtinder@12345', {expiresIn: '1h'})
+            console.log(token)
+            //Add the token to cookie and sending back with the response
+            res.cookie('token', token, {
+                expires: new Date(Date.now() + 900000)
+            })
+            res.send('Login successfull !!!!')
         }
     }
     catch(err) {
-        res.send('ERROR: ' + err.message)
+        res.status(404).send('ERROR: ' + err.message)
     }
+})
+
+app.get('/profile', userAuth, async (req, res) => {
+
+    try {
+        const user = req.user
+        res.send(user)
+    }
+    catch(err) {
+        res.status(404).send('ERROR: ' + err.message)
+    }
+  
+})
+
+app.post('/sendConnectionRequest', userAuth, async (req, res) => {
+
+    const user = req.user
+
+    res.send(user.firstName + ' has send a connection request')
 })
 
 app.get('/user', async (req, res) => {
