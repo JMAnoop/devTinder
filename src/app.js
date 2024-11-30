@@ -28,7 +28,6 @@ app.use(cookieParser())
 
 app.post('/signup', async (req, res) => {
 
-    console.log(req.body)
     try{
         validateSignupData(req)
         const {firstName, lastName, emailId, password} = req.body
@@ -56,15 +55,17 @@ app.post('/login', async (req, res) => {
         if(!user) {
             throw new Error('Invalid credentials')
         }
-        const isPasswordValid = await bcrypt.compare(password,user.password)
+        //const isPasswordValid = await bcrypt.compare(password,user.password)
+        //The above password validation can be moved to schema as below
+        const isPasswordValid = await user.validatePassword(password)
 
         if(!isPasswordValid) {
             throw new Error('Invalid credentials')
         }
         else {
-            //Create a jwt token
-            const token = jwt.sign({_id: user._id}, 'Devtinder@12345', {expiresIn: '1h'})
-            console.log(token)
+            //Create a jwt token .. The below code can be moved to userschema 
+            // const token = jwt.sign({_id: user._id}, 'Devtinder@12345', {expiresIn: '1h'})
+            const token = await user.getJWT()
             //Add the token to cookie and sending back with the response
             res.cookie('token', token, {
                 expires: new Date(Date.now() + 900000)
@@ -93,7 +94,7 @@ app.post('/sendConnectionRequest', userAuth, async (req, res) => {
 
     const user = req.user
 
-    res.send(user.firstName + ' has send a connection request')
+    res.send(user.firstName + ' sent a connection request')
 })
 
 app.get('/user', async (req, res) => {
